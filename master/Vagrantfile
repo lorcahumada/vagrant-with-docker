@@ -1,0 +1,18 @@
+VAGRANFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANFILE_API_VERSION) do |config|
+    config.vm.box = "tknerr/baseimage-ubuntu-16.04"
+    config.vm.box_version = "1.0.0"
+    config.vm.network "private_network", ip: "192.168.50.10"
+    config.vm.hostname = "master"
+    config.vm.synced_folder "shared", "/home/vagrant/projects"
+    config.vm.provision "shell", path: "config-ansible.sh"
+
+    config.vm.provider "docker" do |d|
+        d.remains_running = true
+        d.has_ssh = true
+        # configure docker container 
+        d.create_args = ['--cpuset-cpus=1']
+        d.create_args = ['--memory=512mb']
+    end
+end
